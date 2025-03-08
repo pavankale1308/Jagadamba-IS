@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAGADAMBA INTERNET SERVICE</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            animation: fadeIn 1s ease-in;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .product {
+            transition: transform 0.3s;
+            text-align: center;
+            padding: 15px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            display: inline-block;
+            width: 250px;
+            background-color: #f9f9f9;
+        }
+
+        .product:hover {
+            transform: scale(1.05);
+            background-color: #e0e0e0;
+        }
+
+        button {
+            transition: background-color 0.3s;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #customer-form {
+            margin: 28px auto;
+            padding: 28px;
+            border-radius: 20px;
+            background: #f0f0f0;
+            width: 300px;
+        }
+
+        #products {
+            display: none;
+            margin-top: 20px;
+        }
+
+        header {
+            background-color: #FF5500;
+            padding: 20px;
+            color:black;
+            font-size: 24px;
+            position: relative;
+        }
+
+        .customer-service {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>JAGADAMBA INTERNET SERVICE</h1>
+        <p>Mamidipally Village</p>
+        <p class="customer-service">Customer Service: 9133550086</p>
+    </header>
+    
+    <div id="customer-form">
+        <h2>Enter Your Details</h2>
+        <input type="text" id="customer-name" placeholder="Enter your name" required>
+        <br><br>
+        <input type="text" id="customer-mobile" placeholder="Enter Registred mobile number" required>
+        <br><br>
+        <button onclick="showPackages()">Proceed</button>
+    </div>
+    
+    <main id="products">
+        <h2>Select Your Internet Package</h2>
+        <div class="product" data-name="40MBPS Unlimited" data-price="599">
+            <h2>40MBPS Unlimited</h2>
+            <p>₹599</p>
+            <button onclick="selectPackage('40MBPS Unlimited', 599)">Select</button>
+        </div>
+        <div class="product" data-name="50MBPS Unlimited" data-price="699">
+            <h2>50MBPS Unlimited</h2>
+            <p>₹699</p>
+            <button onclick="selectPackage('50MBPS Unlimited', 699)">Select</button>
+        </div>
+        <div class="product" data-name="100MBPS Unlimited" data-price="999">
+            <h2>100MBPS Unlimited</h2>
+            <p>₹999</p>
+            <button onclick="selectPackage('100MBPS Unlimited', 999)">Select</button>
+        </div>
+        <h2>Cart</h2>
+        <ul id="cart"></ul>
+        <h3>Subtotal: ₹<span id="subtotal">0.00</span></h3>
+        <h3>GST (18%): ₹<span id="gst">0.00</span></h3>
+        <h3>Total: ₹<span id="total">0.00</span></h3>
+        <button onclick="checkout()">Checkout</button>
+        
+        <div id="upi-payment">
+            <h2>Pay via UPI</h2>
+            <img id="upi-qr" src="" alt="UPI QR Code">
+        </div>
+    </main>
+    
+    <script>
+        let selectedPackage = null;
+        let gstRate = 0.18;
+
+        function showPackages() {
+            let name = document.getElementById("customer-name").value;
+            let mobile = document.getElementById("customer-mobile").value;
+            
+            if (name.trim() === "" || mobile.trim() === "") {
+                alert("Please enter your name and mobile number.");
+                return;
+            }
+            
+            document.getElementById("customer-form").style.display = "none";
+            document.getElementById("products").style.display = "block";
+        }
+
+        function selectPackage(name, price) {
+            selectedPackage = { name, price };
+            updateCart();
+        }
+
+        function updateCart() {
+            const subtotal = selectedPackage ? selectedPackage.price : 0;
+            const gstAmount = subtotal * gstRate;
+            const totalAmount = subtotal + gstAmount;
+            
+            document.getElementById("subtotal").textContent = subtotal.toFixed(2);
+            document.getElementById("gst").textContent = gstAmount.toFixed(2);
+            document.getElementById("total").textContent = totalAmount.toFixed(2);
+
+            let upiLink = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=9133550086@upi&pn=JAGADAMBA_INTERNET&mc=0000&tid=123456&tr=${totalAmount.toFixed(2)}&tn=Internet_Package_Payment`;
+            document.getElementById("upi-qr").src = upiLink;
+        }
+
+        function checkout() {
+            if (!selectedPackage) {
+                alert("Please select a package before checkout!");
+                return;
+            }
+            let mobile = document.getElementById("customer-mobile").value;
+            let totalAmount = selectedPackage.price * (1 + gstRate);
+            alert(`Payment link sent to ${mobile}. Total: ₹${totalAmount.toFixed(2)}`);
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
